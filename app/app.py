@@ -1,6 +1,5 @@
 
 import streamlit as st
-from gtts import gTTS
 import tempfile
 import os
 import sys
