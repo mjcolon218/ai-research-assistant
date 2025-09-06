@@ -1,0 +1,8 @@
+streamlit
+gtts
+langchain
+openai
+faiss-cpu
+python-dotenv
+PyPDF2
+requests
