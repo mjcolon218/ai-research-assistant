@@ -23,7 +23,7 @@ vectorstore = FAISS.load_local("vector_store", OpenAIEmbeddings(), allow_dangero
 retriever = vectorstore.as_retriever(search_kwargs={"k": 4})
 
 # Load LLM
-llm = ChatOpenAI(model_name="gpt-4.0-mini", temperature=0)
+llm = ChatOpenAI(model_name="gpt-4.1-mini", temperature=0)
 
 # Build RetrievalQA chain
 qa_chain = RetrievalQA.from_chain_type(
