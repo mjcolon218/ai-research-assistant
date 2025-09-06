@@ -11,7 +11,6 @@ from langchain.chat_models import ChatOpenAI
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-# Validate
 if not OPENAI_API_KEY:
     raise ValueError("❌ OPENAI_API_KEY not set. Check your .env file.")
 
@@ -23,9 +22,9 @@ vectorstore = FAISS.load_local("vector_store", OpenAIEmbeddings(), allow_dangero
 retriever = vectorstore.as_retriever(search_kwargs={"k": 4})
 
 # Load LLM
-llm = ChatOpenAI(model_name="gpt-4.1-mini", temperature=0)
+llm = ChatOpenAI(model_name="gpt-4", temperature=0)
 
-# Build RetrievalQA chain
+# Build the RetrievalQA chain
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff",
@@ -33,23 +32,19 @@ qa_chain = RetrievalQA.from_chain_type(
     return_source_documents=True
 )
 
-# --- Interactive loop ---
-print("\n🤖 Ask a question about your PDFs (type 'exit' to quit)\n")
+# ✅ Function to expose to your Streamlit app
+def ask_question(question: str):
+    if not question:
+        return {
+            "result": "⚠️ No question provided.",
+            "source_documents": []
+        }
 
-while True:
-    query = input("🔎 You: ")
-    if query.lower() in ["exit", "quit"]:
-        print("👋 Goodbye!")
-        break
-
-    result = qa_chain(query)
-    answer = result["result"]
-    sources = result["source_documents"]
-
-    print("\n🧠 Answer:")
-    print(answer)
-
-    print("\n📚 Sources:")
-    for doc in sources:
-        print(f" - {doc.metadata.get('source')} | Section: {doc.metadata.get('title')}")
-    print("\n" + "-"*50 + "\n")
+    try:
+        result = qa_chain(question)
+        return result
+    except Exception as e:
+        return {
+            "result": f"❌ Error: {e}",
+            "source_documents": []
+        }
